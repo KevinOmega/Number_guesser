@@ -12,7 +12,8 @@ main(){
   then
     #if user does not exist
     echo "Welcome, $USERNAME! It looks like this is your first time here."
-    USER_ID=$($PSQL "INSERT INTO users(username) VALUES('$USERNAME') RETURNING user_id")
+    INSERT_USERS_RESULT=$($PSQL "INSERT INTO users(username) VALUES('$USERNAME')")
+    USER_ID=$($PSQL "SELECT user_id FROM users WHERE username='$USERNAME'")
   else
     #if user exist
     NUMBER_OF_GAMES=$($PSQL "SELECT COUNT(*) FROM games WHERE user_id=$USER_ID")
@@ -22,12 +23,10 @@ main(){
   echo "Guess the secret number between 1 and 1000:"
   
   GUESSED=0
-
   while [[ $GUESSED == 0 ]]
   do
     read NUMBER
     GUESSES=$(($GUESSES+1))
-    echo $RANDOM_NUMBER
     if [[ $NUMBER == $RANDOM_NUMBER  ]]
     then
       GUESSED=1
